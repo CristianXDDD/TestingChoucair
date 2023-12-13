@@ -1,0 +1,12 @@
+[
+{
+    "nombre":"Estefania Lopez",
+    "idlibro": 5,
+    "nombrepedido":"Camilo Robayo"
+},
+{
+    "nombre":"Rodriguez Alex",
+    "idlibro": 3,
+    "nombrepedido":"Camilo Robayo"
+}
+]

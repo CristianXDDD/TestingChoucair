@@ -1,0 +1,476 @@
+{
+	"info": {
+		"_postman_id": "0f2a791a-b637-40b6-ab8a-48ce6288c9e5",
+		"name": "Prueba_api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29568549"
+	},
+	"item": [
+		{
+			"name": "Consultar si el estado de la api es activo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"El codigo es 200, el estado del servidor es OK\",function(){\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"El tiempo de respuesta es de menos 999ms\",function(){\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(999);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"El cuerpo del body tiene un status de OK\",function(){\r",
+							"    pm.expect(pm.response.json().status).to.eql(\"OK\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{urlbase}}{{estado}}",
+					"host": [
+						"{{urlbase}}{{estado}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Lista de todos los libros",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Este codigo es 200 y se mostro la lista de libros correspondientes\",function(){\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"El titulo del libro con id '3' coincide con el titulo de este mismo\",function(){\r",
+							"    var jsonData=pm.response.json();\r",
+							"    var libro=jsonData.find(x=> x.id==\"3\")\r",
+							"    pm.expect(libro.name).to.equal(\"The Vanishing Half\")});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{urlbase}}{{lista}}",
+					"host": [
+						"{{urlbase}}{{lista}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Buscar libro por id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"El codigo recibido es 200\",function(){\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData=pm.response.json();\r",
+							"pm.test(\"Los datos si existen en la respuesta\",()=>{\r",
+							"    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+							"    pm.expect(jsonData.name).to.be.a(\"string\");\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{urlbase}}{{lista}}6",
+					"host": [
+						"{{urlbase}}{{lista}}6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Registrar un token exitosamente",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"user\",pm.variables.replaceIn(\"{{$randomFirstName}}\"))\r",
+							"pm.environment.set(\"email\",pm.variables.replaceIn(\"{{$randomEmail}}\"))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var response = pm.response.json();\r",
+							"var tokenobtenido=response.accessToken\r",
+							"pm.environment.set(\"token\",tokenobtenido);\r",
+							"\r",
+							"pm.test(\"El codigo es 201 se a creado con exito\",function(){\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"const jsonData=pm.response.json();\r",
+							"pm.test(\"Los datos si existen en la respuesta el token se a creado correctamente\",()=>{\r",
+							"    pm.expect(jsonData.accessToken).to.be.a(\"string\");\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"clientName\": \"{{user}}\",\r\n   \"clientEmail\": \"{{email}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{urlbase}}{{aplicliente}}",
+					"host": [
+						"{{urlbase}}{{aplicliente}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Un cliente solicita un libro",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var response = pm.response.json();\r",
+							"var solicitudodte=response.orderId\r",
+							"pm.environment.set(\"solicitud\",solicitudodte);\r",
+							"\r",
+							"pm.test(\"El codigo es 201 se a creado con exito la solicitud\",function(){\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"var schema = {\r",
+							"    \"type\":\"object\",\r",
+							"    \"properties\":{\r",
+							"    \"created\": {\"type\":\"boolean\"},\r",
+							"    \"orderId\": {\"type\":\"string\"} \r",
+							"    },\r",
+							"};\r",
+							"pm.test(\"Validacion de nuestro schema\",()=>{\r",
+							"    pm.response.to.have.jsonSchema(schema)\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"bookId\": \"{{idlibro}}\",\r\n  \"customerName\": \"{{nombrepedido}}\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{urlbase}}{{solicitar}}",
+					"host": [
+						"{{urlbase}}{{solicitar}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ver solicitud de libro",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"El codigo es 200 el libro se encuentra ordenado\",function(){\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"El titulo de la orden con id '{{solicitud}}' coincide con el nombre del que esta haciendo la solicitud\",function(){\r",
+							"    var jsonData=pm.response.json();\r",
+							"    var ordenid=pm.environment.get(\"solicitud\");\r",
+							"    var orden=jsonData.find(x=> x.id==ordenid);\r",
+							"    pm.expect(orden.customerName).to.equal(\"Camilo Robayo\");\r",
+							"});\r",
+							"\r",
+							"var schema={\r",
+							"    \"items\":{\r",
+							"        \"type\":\"object\",\r",
+							"        \"properties\":\r",
+							"        {\r",
+							"            \"id\":{\"type\":\"string\"},\r",
+							"            \"bookId\":{\"type\":\"number\"},\r",
+							"            \"customerName\":{\"type\":\"string\"},\r",
+							"            \"createdBy\":{\"type\":\"string\"},\r",
+							"            \"quantity\":{\"type\":\"number\"},\r",
+							"            \"timestamp\":{\"type\":\"number\"},\r",
+							"        }\r",
+							"    }\r",
+							"};\r",
+							"pm.test(\"Validacion del schema\",()=>{\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{urlbase}}{{solicitar}}",
+					"host": [
+						"{{urlbase}}{{solicitar}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actualizar el nombre del solicitante por id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"El codigo es 204 se actualizo correctamente el nombre.\",function(){\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"customerName\": \"{{nombre}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{urlbase}}{{solicitar}}{{solicitud}}",
+					"host": [
+						"{{urlbase}}{{solicitar}}{{solicitud}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ver solicitud de libro por id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"El codigo es 200 las orden por id es correcta\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Los datos en el esquema si existen y concuerdan con la peticion\",()=>{\r",
+							"    pm.expect(jsonData.id).to.be.a(\"string\");\r",
+							"    pm.expect(jsonData.timestamp).to.be.a(\"number\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{urlbase}}{{solicitar}}{{solicitud}}",
+					"host": [
+						"{{urlbase}}{{solicitar}}{{solicitud}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Eliminar la solicitud por id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"El codigo es 204 la orden se a eliminado correctamente.\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{urlbase}}{{solicitar}}{{solicitud}}",
+					"host": [
+						"{{urlbase}}{{solicitar}}{{solicitud}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
